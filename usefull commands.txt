@@ -1,0 +1,21 @@
+Dies startet ein test mit dem aus platfomio.ini enviorement: hardware_test_env und filtert also führt nur test_dummy aus:
+	pio test -e hardware_test_env -f "test_hardware/test_dummy" -vvv
+
+------------------------------------------------------------------------
+
+hier eine voll funktionierende enviroment config mit filter:
+[env:hardware_test_env]
+platform = espressif32
+framework = arduino
+test_framework = googletest
+board =  esp32-c3-devkitm-1
+;GoogleTest not building for ESP32 #1476
+;https://github.com/platformio/platform-espressif32/issues/1476#issuecomment-2416462921
+build_unflags = -std=gnu++11 ;otherwise #error C++ versions less than C++14 are not supported.
+build_flags = -DREAL_HARDWARE -std=c++14
+test_filter = test_hardware/test_dummy
+lib_deps = 
+    bogde/HX711@^0.7.5
+
+---------------------------------------------
+test_main.cpp muss immer unter test\ liegen der filter funktioniert trozdem.

@@ -1,0 +1,119 @@
+; PlatformIO Project Configuration File
+;
+;   Build options: build flags, source filter
+;   Upload options: custom upload port, speed and extra flags
+;   Library options: dependencies, extra library storages
+;   Advanced options: extra scripting
+;
+; Please visit documentation for the other options and examples
+; https://docs.platformio.org/page/projectconf.html
+
+[platformio]
+default_envs = base_hardware  ; Standard für schnelle Entwicklung
+
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; BASE KONFIGURATIONEN
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+[env:base_native]
+platform = native
+lib_deps = google/googletest@^1.12.1
+build_flags = 
+    -DNATIVE_TESTING
+    -Itest/native/mocks
+    -Itest/fixtures
+test_filter = test/native/
+
+[env:base_hardware]
+platform = espressif32
+board =  esp32-c3-devkitm-1
+build_flags = -DREAL_HARDWARE
+lib_deps = 
+    bogde/HX711@^0.7.5
+    adafruit/RTClib@^2.1.1
+
+    
+
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Nativ TESTS (PC)
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+[env:native_tests]
+extends = base_native
+test_filter = 
+    test/native/scale/
+    test/native/data/
+    test/native/rtc/
+    test/native/connectivity/
+    test/native/EventDispatcher/
+
+[env:native_integration]
+extends = base_native
+test_filter = test/integration/
+
+[env:eventDispatcher_tests]
+platform = native
+lib_deps = google/googletest@^1.12.1
+test_filter = test/native/EventDispatcher/*
+
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; HARDWARE TESTS (ESP32)
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+[env:hw_scale]
+extends = base_hardware
+test_filter = test/Hardware/Scale/
+lib_deps += 
+    adafruit/Adafruit Unified Sensor@^1.1.4
+
+[env:hw_rtc]
+extends = base_hardware
+test_filter = test/hardware/rtc/
+build_flags += -DRTC_BATTERY_TEST
+
+[env:hw_display]
+extends = base_hardware
+test_filter = test/hardware/display/
+lib_deps += adafruit/Adafruit EPD@^2.4.5
+
+[env:hw_connectivity]
+extends = base_hardware
+test_filter = test/hardware/connectivity/
+lib_deps += arduino-libraries/ArduinoHttpClient@^0.4.0
+
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; SPEZIAL-TESTS
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+; [env:power_tests]
+; extends = hw_rtc
+; test_filter = test/hardware/rtc/test_battery_backup.cpp
+; build_flags += -DPOWER_TEST_DURATION=3600  ; 1h Test
+
+[env:garmin_live]
+extends = hw_connectivity
+test_filter = test/hardware/connectivity/test_garmin_upload_hw.cpp
+build_flags += 
+    -DGARMIN_API_LIVE
+    -DGARMIN_USER_OVERRIDE=\"$ENV{GARMIN_USER}\"
+    -DGARMIN_PWD_OVERRIDE=\"$ENV{GARMIN_PWD}\"
+
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; KOMBINIERTE UMWELTEN
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+[env:all_hw_tests]
+extends = base_hardware
+test_filter = 
+    test/hardware/
+    test/integration/test_*_flow.cpp
+
+[env:ci_full]
+extends = base_native, base_hardware
+test_filter = 
+    test/native/
+    test/hardware/
+    test/integration/
+
+
+

@@ -14,7 +14,7 @@
 #define LED_BUILTIN 8
 
 #include "HX711.h"
-#define SCALE_AVGERAGE 32
+#define SCALE_AVGERAGE 64
 #define DOUT 1
 #define CLK 0
 
@@ -36,36 +36,39 @@ void setup()
     scaleManager.tare(SCALE_AVGERAGE); 
     Serial.print("Tare: ");
     Serial.println(scaleManager.getTare());
-    scaleManager.setScaleGramFactor(1.0f);
+    scaleManager.setScaleGramFactor(0.00228429031253);
+    Serial.print("ScaleFactor: ");
+    Serial.println(scaleManager.getScaleGramFactor(),10);
+    
     eventDispatcher.addListener("Raw_Value", OnRawValue);
     eventDispatcher.addListener("weight", OnWeight);
     
 
     pinMode(LED_BUILTIN, OUTPUT);
 }
-float filteredWeight = 0.0f; // Startwert = 0.0 (leere Waage)
-
+float filteredWeight = 0.0f; 
+float filteredRawValue = 0.0f; 
 void loop()
 {
     digitalWrite(LED_BUILTIN, HIGH);
 
-    float rawValue = scaleManager.measureRawNoTare();
+    float rawValue = scaleManager.measureRawAverage(1);
     float weight = 0;
-    weight = scaleManager.measureQuantity(); // toDo the average should be done in the scaleManager
-    filteredWeight = 0.9f * filteredWeight + 0.1f * weight;  // Filterung
-    Serial.print(">Filtered_Weight: ");
-    Serial.println(filteredWeight);
+    weight = scaleManager.measureInGrams(10); // toDo the average should be done in the scaleManager
+
     eventDispatcher.dispatch("Raw_Value", rawValue);
     eventDispatcher.dispatch("weight", weight);
-
     digitalWrite(LED_BUILTIN, LOW);
     //delay(100);
 }
 
 void OnRawValue(float rawValue)
 {
-    Serial.print(">Raw Value: ");
+    Serial.print(">Raw_Value: ");
     Serial.println(rawValue);
+    filteredRawValue = 0.8f * filteredRawValue + 0.2f * rawValue;  // Filterung
+    Serial.print(">Filtered_Raw_Value: ");
+    Serial.println(filteredRawValue);
 }
 
 void OnWeight(float weight)
@@ -73,7 +76,13 @@ void OnWeight(float weight)
     Serial.print(">Weight: ");
     Serial.println(weight);
     waterTracker.updateConsumption(weight);
+
+    filteredWeight = 0.8f * filteredWeight + 0.2f * weight;  // Filterung
+    Serial.print(">Filtered_Weight: ");
+    Serial.println(filteredWeight);
 }
+
+
 #else
 
 int main()

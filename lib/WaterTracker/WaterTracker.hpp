@@ -9,10 +9,11 @@
 class WaterTracker
 {
 public:
-    WaterTracker(ScaleManager &scale, EventDispatcher &dispatcher);
+    WaterTracker( EventDispatcher &dispatcher);
+    void begin(); // z. B. lade EEPROM-Werte etc.
     void updateConsumption(float currentWeight);
     // todo: void undoLastAction();
-    void onWeightChanged();
+    void interpretWeight(float newWeight);
     float getDailyConsumption() const;
     int getRefillCount() const;
     void resetDailyConsumption();
@@ -28,6 +29,5 @@ private:
     bool isNewDay();
     bool isRefilled(float currentWeight);
     void detectDrink(float currentWeight);
-    ScaleManager &m_scaleManager;
     EventDispatcher &m_eventDispatcher;
 };

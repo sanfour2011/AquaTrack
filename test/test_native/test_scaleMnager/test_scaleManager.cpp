@@ -2,9 +2,6 @@
 #include "ScaleManager.hpp"
 #include "../mocks/mock_hx711.hpp"
 
-#define EmptyBottleRawVal 245108.08f
-#define EmptyBottleHolderRawVal 14102.0f
-
 
 class ScaleManagerTest : public ::testing::Test
 {
@@ -18,7 +15,7 @@ protected:
         m_mockScaleSensor.setWaterLevelRawVal(0.0f); // Set water level to 0 for testing
         m_mockScaleSensor.setEmptyBottleRawVal(0.0f); 
         m_mockScaleSensor.setBottleHolderRawVal(0.0f);
-        // m_mockScaleSensor.setEmptyBottleRawVal(EmptyBottleRawVal);
+        // m_mockScaleSensor.setEmptyBottleRawVal(EMPTY_BOTTLE_RAW_VAL);
         // m_mockScaleSensor.setBottleHolderRawVal(EmptyBottleHolderRawVal);
     }
     
@@ -28,7 +25,7 @@ TEST_F(ScaleManagerTest, Measure_Weight_in_Grams)
 {
     float rawValue500mlWater = 6542.1f; // Simulate a weight of 500 grams of water (only the water weight, no bottle).
     float deltaGrams = 500.0f;
-    float tareRaw = EmptyBottleRawVal + EmptyBottleHolderRawVal;
+    float tareRaw = EMPTY_BOTTLE_RAW_VAL + BOTTLE_HOLDER_RAW_VAL; // Simulate the tare value (weight of the empty bottle).
    
     float scaleFactor =   deltaGrams/rawValue500mlWater;
      m_scaleManager.setTare(tareRaw); 
@@ -40,7 +37,7 @@ TEST_F(ScaleManagerTest, Measure_Weight_in_Grams)
 
 TEST_F(ScaleManagerTest, Measure_Quantity)
 {
-    float tareRaw = EmptyBottleHolderRawVal+EmptyBottleHolderRawVal;
+    float tareRaw = EMPTY_BOTTLE_RAW_VAL + BOTTLE_HOLDER_RAW_VAL;
     float rawValue500mlWater = 6542.1f; // Simulate a weight of 500 ml (≈ 500 grams)of water (only the water weight, no bottle).
     float deltaMilliliters = 500.0f;   
     
@@ -54,10 +51,10 @@ TEST_F(ScaleManagerTest, Measure_Quantity)
 
 TEST_F(ScaleManagerTest, Measure_In_Grams)
 {
-    float rawValue = 300.0f;
-    float scaleFactor = 0.1f;
+    float rawValue = 9890.0f; // Should be somthing around 11g with the SCALE_GRAM_FACTOR = 0.00228429031253f; 
+    float scaleFactor = SCALE_GRAM_FACTOR;
     m_mockScaleSensor.setMockRawData(rawValue);
-    m_scaleManager.setScaleGramFactor(scaleFactor);
+    m_scaleManager.setScaleGramFactor(SCALE_GRAM_FACTOR);
     EXPECT_EQ(m_scaleManager.measureInGrams(), rawValue * scaleFactor);
 }
 
@@ -66,7 +63,7 @@ TEST_F(ScaleManagerTest, Tare_Test)
     m_mockScaleSensor.useRandomData();
     float tareValue = m_scaleManager.measureRawNoTare();
     m_mockScaleSensor.setMockRawData(tareValue);//Disables also the usage of random data
-    m_scaleManager.tare(1);
+    m_scaleManager.tare(10);
     EXPECT_EQ(m_scaleManager.getTare(), tareValue);
     EXPECT_EQ(m_scaleManager.measureRawNoTare(), tareValue);
 }

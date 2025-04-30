@@ -6,6 +6,10 @@
 #include <vector>
 #include <random>
 
+constexpr float EMPTY_BOTTLE_RAW_VAL = 245108.08f;
+constexpr float BOTTLE_HOLDER_RAW_VAL = 14102.0f;
+constexpr float SCALE_GRAM_FACTOR = 0.00228429031253f; // Value from real sensor with holder
+
 class MockScaleSensor : public IScaleSensor
 {
 public:
@@ -69,7 +73,7 @@ private:
     float m_bottleHolder = 14102.0f; // the value change wehne the bottle holder plate mountet on the load cell
     float m_emptyBottle = 245108.08f; // the value change when the empty bottle is putted on the plate. (it was an 0,75L Glass Ensiger Sport classic bottle)
     float m_waterWeight = 0.0f; // the value change when the water is putted in the bottle.
-  
+    
     std::mt19937 rng;
     // Predefined dataset of float values to simulate the sensor data. Just empty sensor (only load cell) nothing an top
     const std::vector<float> dataset = {

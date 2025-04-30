@@ -6,7 +6,7 @@ float ScaleManager::measureRawAverage(uint_fast8_t times)
     float sum = 0.0f;
     for (uint_fast8_t i = 0; i < times; ++i)
     {
-        sum += m_sensor.readRawValue();
+        sum += m_sensor.readRawValue()-m_tare;
     }
     return sum / times;
 }

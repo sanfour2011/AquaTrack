@@ -8,7 +8,7 @@
 
 constexpr float EMPTY_BOTTLE_RAW_VAL = 245108.08f;
 constexpr float BOTTLE_HOLDER_RAW_VAL = 14102.0f;
-constexpr float SCALE_GRAM_FACTOR = 0.00228429031253f; // Value from real sensor with holder
+constexpr float SCALE_GRAM_FACTOR = 0.00228429031253f; // Value from real physical sensor with holder
 
 class MockScaleSensor : public IScaleSensor
 {

@@ -1,4 +1,4 @@
-# AquaTrack – Projektverbesserungen
+# AquaTrack – Projektverbesserungen aus verschiedenen Quellen und Foren
 ## Improve Measurment noise
 ### 1. Low Pass Filter
 

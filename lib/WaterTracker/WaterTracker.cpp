@@ -1,48 +1,54 @@
 #include "WaterTracker.hpp"
-#include "waterTrackerEvents.hpp"
+#include "WaterTrackerEvents.hpp"
+#include <ctime>
 
-WaterTracker::WaterTracker(EventDispatcher &dispatcher)
-    :  m_eventDispatcher(dispatcher)
+WaterTracker::WaterTracker(EventDispatcher<float> &dispatcher)
+    : m_eventDispatcher(dispatcher)
 {
     // m_data.reset(); ich glaube hier ein reset zu machen ist nicht sinnvoll sagen wir mal nach einem reboot wird oder muss ja eh neu geladen werden aus einer quelle
+}
+
+void WaterTracker::begin()
+{
+    // Hier könnten EEPROM-Werte geladen werden
+    // Beispiel: m_data = loadFromEEPROM();
 }
 
 void WaterTracker::interpretWeight(float newWeight)
 {
 
-    if (newWeight < 0) // currentWeight sollte = -tare sein
+    if (newWeight < 5.0f) // Gewicht ~0g -> Flasche wurde von der Waage genommen
     {
-        // Container removed
-        m_eventDispatcher.dispatch(WaterTrackerEvents::ErrorWaterTracker, newWeight);
+        m_eventDispatcher.dispatch(WaterTrackerEvents::ContainerRemoved, newWeight);
         return;
     }
 
-    if (m_data.getLastWeight() < newWeight) // Refill
+    if (newWeight > m_data.getLastWeight())
     {
-        float addedWater = currentWeight - m_data.getLastWeight();
-        // m_data.setFullWeight(currentWeight); // sollte man einmalig machen können? zum beispiel neue Flasche?
-        m_eventDispatcher.dispatch("Container_Refilled", newWeight);
+        m_data.setRefillCount(m_data.getRefillCount() + 1);
+        m_data.setFullWeight(newWeight);
         m_data.setLastWeight(newWeight);
-
+        m_eventDispatcher.dispatch(WaterTrackerEvents::ContainerRefilled, newWeight);
         return;
     }
 
-    if (m_data.getLastWeight() > newWeight)//Water Consumed
-    {   m_eventDispatcher.dispatch("Water_Consumed", newWeight);
+    if (m_data.getLastWeight() > newWeight) // Water Consumed
+    {
+        m_eventDispatcher.dispatch(WaterTrackerEvents::ConsumedMl, newWeight);
         updateConsumption(newWeight);
         return;
     }
 }
 
-void WaterTracker::updateConsumption(float currentWeight)
+void WaterTracker::updateConsumption(float newWeight)
 {
     if (isNewDay())
         m_data.reset();
 
-    float ml_Consumed = m_data.getPreviousConsumption() - m_scaleManager.measureQuantity();
+    float ml_Consumed = m_data.getPreviousConsumption() - newWeight;
     float remainingMl = m_data.getFullWeight() - ml_Consumed;
 
-    m_data.setLastWeight(currentWeight);
+    m_data.setLastWeight(newWeight);
     m_data.incrementDrinkCount();
     m_data.setPreviousConsumption(ml_Consumed);
     m_data.setDailyConsumption(m_data.getDailyConsumption() + ml_Consumed);
@@ -58,14 +64,4 @@ bool WaterTracker::isNewDay()
     return false;
 }
 
-bool WaterTracker::isRefilled(float currentWeight)
-{
-    if (currentWeight > m_data.getLastWeight())
-    {
-        m_data.setRefillCount(m_data.getRefillCount() + 1);
-        m_data.setFullWeight(currentWeight);
-        m_eventDispatcher.dispatch("Refill", currentWeight);
-        return true;
-    }
-    return false;
-}
+

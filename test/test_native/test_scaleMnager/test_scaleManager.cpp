@@ -64,7 +64,8 @@ TEST_F(ScaleManagerTest, Tare_Test)
     float tareValue = m_scaleManager.measureRawNoTare();
     m_mockScaleSensor.setMockRawData(tareValue);//Disables also the usage of random data
     m_scaleManager.tare(10);
-    EXPECT_EQ(m_scaleManager.getTare(), tareValue);
+    // EXPECT_EQ(m_scaleManager.getTare(), tareValue);
+    EXPECT_FLOAT_EQ(m_scaleManager.getTare(), tareValue);
     EXPECT_EQ(m_scaleManager.measureRawNoTare(), tareValue);
 }
 

@@ -69,6 +69,23 @@ TEST_F(EventDispatcherTest, Dispatching_Tests)
     EXPECT_EQ(testStringListener.listener1Data, testStringValue);
 }
 
+TEST_F(EventDispatcherTest, Dispatching_Tests_EmptyListener)
+{
+    float aTestValue = 1.2;
+    EXPECT_EQ(floatEventManager.getTotalNumberOfListeners(), 0);
+    floatEventManager.dispatch(TEST_EVENT_1, aTestValue);
+    EXPECT_EQ(testFloatListener.listener1Called, 0);
+    EXPECT_EQ(testFloatListener.listener1Data, 0.0f);
+    EXPECT_EQ(testFloatListener.listener2called, 0);
+    EXPECT_EQ(testFloatListener.listener2Data, 0.0f);
+
+    std::string testStringValue = "TEST_STRING";
+    EXPECT_EQ(stringEventManager.getTotalNumberOfListeners(), 0);
+    stringEventManager.dispatch("TEST_EVENT_1", testStringValue);
+    EXPECT_EQ(testStringListener.listener1Called, 0);
+    EXPECT_EQ(testStringListener.listener1Data, "");
+}
+
 TEST_F(EventDispatcherTest, RemoveListener_Tests)
 {
     EventDispatcher<float>::ListenerId listenerId = floatEventManager.addListener(
@@ -86,6 +103,9 @@ TEST_F(EventDispatcherTest, RemoveListener_Tests)
 
     EXPECT_TRUE(floatEventManager.removeListener(listenerId));
     EXPECT_EQ(floatEventManager.getTotalNumberOfListeners(), 0);
+
+    floatEventManager.dispatch(TEST_EVENT_1, aTestValue);
+    EXPECT_EQ(testFloatListener.listener1Called, 1);// Still 1 because the listener was removed after the dispatch
 }
 
 

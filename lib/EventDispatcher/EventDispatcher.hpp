@@ -5,6 +5,7 @@
 #include <unordered_map> // is more effizient and can be used when key order is irrelevant (found by chance)
 #include <vector>
 #include <algorithm>
+#include <string>
 
 #ifndef MAX_LISTENERS
 #define MAX_LISTENERS 255 // Maximum number of listeners allowed per event (maximum possible is 65535)
@@ -23,28 +24,22 @@ public:
     EventDispatcher() = default; // =default tells the compiler to generate these automatically. This is efficient, clear, and makes the class trivially constructible/destructible.
     ~EventDispatcher() = default;
 
-    // just to skip the std::string constructor when char* is passed (when no std::string is wanted it is needed to ommit addListener with std::string! hashing is then required to store it in the map)
-    ListenerId addListener(const char *eventId, EventCallback &listner) //&&-> Rvalue-Referenz not working using Lvalue-Referenz instead
-    {
-        return addListener(std::string(eventId), listner);
-    }
-
-    void dispatch(const char *eventId, const T &data)
+     void dispatch(const char *eventId, const T &data)
     {
         dispatch(std::string(eventId), data);
     }
 
-    ListenerId addListener(const std::string &eventId, EventCallback &&listner)
-    {
-        auto &listeners = m_eventListeners[eventId];
+  ListenerId addListener(const std::string &eventId, EventCallback listner)
+{
+    auto &listeners = m_eventListeners[eventId];
 
-        if (listeners.size() >= MAX_LISTENERS)
-            return 0;
+    if (listeners.size() >= MAX_LISTENERS)
+        return 0;
 
-        listeners.emplace_back(getNextListenerId(), std::move(listner));
+    listeners.emplace_back(getNextListenerId(), std::move(listner));
 
-        return listeners.back().getId();
-    }
+    return listeners.back().getId();
+}
 
     void dispatch(const std::string &eventId, const T &data)
     {

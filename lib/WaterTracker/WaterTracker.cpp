@@ -17,6 +17,12 @@ void WaterTracker::begin()
 void WaterTracker::interpretWeight(float newWeight)
 {
 
+    if (newWeight < -m_implausibleWeightThreshold || newWeight > m_implausibleWeightThreshold)
+    {
+        m_eventDispatcher.dispatch(WaterTrackerEvents::ErrorWaterTracker, newWeight);
+        return;
+    }
+    
     if (newWeight < 5.0f) // Gewicht ~0g -> Flasche wurde von der Waage genommen
     {
         m_eventDispatcher.dispatch(WaterTrackerEvents::ContainerRemoved, newWeight);
@@ -97,4 +103,14 @@ void WaterTracker::setMaxCapacity(float maxCapacity)
 float WaterTracker::getMaxCapacity() const
 {
     return m_data.getMaxCapacity();
+}
+
+void WaterTracker::setImplausibleWeightThreshold(float implaWeight)
+{
+    m_implausibleWeightThreshold = implaWeight;
+}
+
+float WaterTracker::getImplausibleWeightThreshold()
+{
+    return m_implausibleWeightThreshold;
 }

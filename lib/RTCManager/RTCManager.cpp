@@ -40,7 +40,7 @@
 #endif // ARDUINO
 RTCManager::RTCManager() {
     // Initialisiere die interne RTC, wenn der Mikrocontroller gestartet wird
-    initTime();
+    //initTime(); // ToDo: kann noch nicht im test funktionieren
 }
 
 

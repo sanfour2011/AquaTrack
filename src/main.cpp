@@ -19,13 +19,13 @@
 #define DOUT 1
 #define CLK 0
 
-EventDispatcher eventDispatcher;
+EventDispatcher <float>eventDispatcher;
 void OnRawValue(float rawValue);
 void OnWeight(float weight);
 
 HX711Sensor hx711(DOUT, CLK);
 ScaleManager scaleManager(hx711);
-WaterTracker waterTracker(scaleManager, eventDispatcher);
+WaterTracker waterTracker(eventDispatcher);
 
 void setup()
 {
@@ -76,7 +76,7 @@ void OnWeight(float weight)
 {
     Serial.print(">Weight: ");
     Serial.println(weight);
-    waterTracker.updateConsumption(weight);
+    waterTracker.interpretWeight(weight);
 
     filteredWeight = 0.8f * filteredWeight + 0.2f * weight;  // Filterung
     Serial.print(">Filtered_Weight: ");

@@ -39,10 +39,10 @@ TEST_F(WaterTrackerTest, Detect_Lifted_Empty_Bottle)
     m_mockScaleSensor.setMockRawData(tare - EMPTY_BOTTLE_RAW_VAL); 
 
     m_eventDispatcher.addListener(WaterTrackerEvents::ContainerRemoved, [tare](float weight) {
-        EXPECT_NEAR(weight, tare - EMPTY_BOTTLE_RAW_VAL, 1.0f); // Check if the weight is approximately equal to tare - empty bottle weight
+        EXPECT_NEAR(weight, (-EMPTY_BOTTLE_RAW_VAL)*SCALE_GRAM_FACTOR, 1.0f); // Check if the weight is approximately equal to tare - empty bottle weight
     });
     m_eventDispatcher.addListener(WaterTrackerEvents::ErrorWaterTracker, [tare](float weight) {
-        EXPECT_NEAR(weight, tare - EMPTY_BOTTLE_RAW_VAL, 1.0f); // Check if the weight is approximately equal to tare - empty bottle weight
+        EXPECT_NEAR(weight, (-EMPTY_BOTTLE_RAW_VAL)*SCALE_GRAM_FACTOR, 1.0f); // Check if the weight is approximately equal to tare - empty bottle weight
     });
   
     m_tracker.interpretWeight(m_scaleManager.measureInGrams()); // Call the method to interpret the weight

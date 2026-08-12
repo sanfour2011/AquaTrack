@@ -20,10 +20,13 @@ public:
     void setAveragingCount(uint_fast8_t count);
     void setMaxCapacity(float value);
     float getMaxCapacity() const;
+    void setImplausibleWeightThreshold(float implaWeight);
+    float getImplausibleWeightThreshold();
     
     
     private:
     uint_fast8_t m_averagingCount = 10;
+    float m_implausibleWeightThreshold = 5000.0; // max that the scale is rated for in g
     WaterTrackerData m_data;
     void updateConsumption(float currentWeight);
     bool isNewDay();

@@ -1,64 +1,62 @@
 # AquaTrack
 
-**AquaTrack** is an ESP32-based smart water tracking system that measures daily water consumption using a 5kg load cell and HX711 sensor. The system logs data, converts weight into milliliters, and optionally uploads it to Garmin Connect.
+ESP32-C3 based water bottle scale. HX711 + 5kg load cell, event-driven processing, deep-sleep concept for battery operation (not yet implemented).
 
-## Features
+## Status
 
-- ✅ **Accurate Weight Measurement**: Uses HX711 and a 5kg load cell.
-- ⏳ **Real-Time Data Processing**: Converts weight into milliliters with calibration support.
-- ⚡ **Interrupt-Driven Measurement**: Automatically detects changes in weight.
-- ⏱ **Time Synchronization**: Uses RTC with NTP fallback.
-- 📂 **Logging System**: Saves data to an SD card (CSV or SQLite).
-- 🌍 **Garmin Connect Integration**: Uploads water intake data.
-- 🛠 **Modular Architecture**: Easily extendable components.
+Done and tested: `WaterTracker`, `ScaleManager`, `EventDispatcher`. 8 native tests, all passing.
 
-## Folder Structure
+Stub, compiles, no functionality: `GarminUploader`, `ESPHttpClient`.
 
-```plaintext
-AquaTrack/
-│-- src/
-│   │-- main.cpp  # Main program logic
-│   │-- modules/
-│   │   │-- ScaleManager.cpp  # Handles weight measurement
-│   │   │-- DataProcessor.cpp  # Converts weight to ml
-│   │   │-- RTCManager.cpp  # Time management
-│   │   │-- SDLogger.cpp  # Logs data to storage
-│   │   │-- GarminUploader.cpp  # Uploads data to Garmin
-│-- include/
-│   │-- ScaleManager.h
-│   │-- DataProcessor.h
-│   │-- RTCManager.h
-│   │-- SDLogger.h
-│   │-- GarminUploader.h
-│-- lib/  # External libraries
-│-- test/  # Unit tests
-│-- platformio.ini  # ESP32 configuration
+Not implemented: `DataLogger`, `InterruptHandler`, `CommandProcessor`. Header/empty .cpp, no logic.
+
+RTC: NTP sync over WiFi. No external RTC hardware. Drifts without a WiFi connection.
+
+Garmin upload: no public REST API for end users. Web-scraping approach blocked by captcha. Currently manual entry in the Garmin app only.
+
+## Hardware
+
+ESP32-C3 SuperMini, HX711, 5kg load cell. Pinout/datasheet in `docs/hardware/`.
+
+![Prototype](docs/hardware/prototype.jpg)
+
+3D-printable housing (STL files): `docs/cad/`.
+
+## Architecture
+
+Event dispatcher pattern (observer). `WaterTracker` doesn't know its consumers. `main.cpp`, future display/upload modules listen for events (`ContainerRefilled`, `ContainerEmpty`, `ConsumedMl`, `ErrorWaterTracker`, ...).
+
+Sensor interface (`IScaleSensor`) decouples hardware from logic. Enables mocking for native tests without a board.
+
+## Build & Test
+
+```sh
+# Native unit tests, no board required
+pio test -e native_test_env
+
+# Firmware for ESP32-C3
+pio run -e esp32-c3-devkitm-1
+
+# Hardware test (HX711 sensor, board connected via USB)
+pio test -e hardware_test_env
 ```
 
-## Installation
+Adjust COM port in `platformio.ini` under `[common]`.
 
-1. Install [PlatformIO](https://platformio.org/).
-2. Clone the repository:
-   ```sh
-   git clone https://github.com/yourusername/AquaTrack.git
-   ```
-3. Open the project in VS Code with PlatformIO.
-4. Upload the firmware to ESP32:
-   ```sh
-   pio run --target upload
-   ```
+## Remaining Work
 
-## Usage
+- No deep sleep, no interrupt handling for battery operation. `InterruptHandler` is empty.
 
-- 🏺 Place the water container on the load cell.
-- 🛠 Press the tare button to calibrate.
-- 🔄 The system will log and upload water intake automatically.
+- No persistence layer. Values are lost on reboot, `WaterTracker::begin()` currently loads nothing.
+   
+- `updateConsumption()` assumes monotonically decreasing weight between two readings. No handling for mid drink or half refills.
 
-## Contributing
+- No HMI or display.
 
-Feel free to contribute by submitting issues or pull requests! 🚀
+- No config commands. `CommandProcessor` unfinished, see comments in `lib/    CommandProcessor`.
+
+- RTC time isn't set anywhere yet. `RTCManager::setTime()` exists but nothing calls it from `main.cpp`.
 
 ## License
 
-📜 MIT License
-
+MIT

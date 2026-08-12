@@ -1,6 +1,6 @@
-# AquaTrack – Measurement Noise Filtering
+# AquaTrack Measurement Noise Filtering
 
-DSP algorithms and filtering strategies for load cell weight data.
+DSP algorithms and filtering strategies for load cell weight data meight help to take more accurate measurements. After doint some resarch i came up with these type of filters and its implementations.
 
 ## Filter Implementations
 
@@ -92,4 +92,4 @@ float kalman(float newVal) {
 
 ## Tooling & Real-Time Tuning
 PlatformIO's built-in serial plotter lacks two-way communication for dynamic parameter tuning.
-* **TODO:** Build a Python tool (`pyserial` + `matplotlib`) to visualize raw/filtered channels and send updated filter parameters back over UART.
+* **Todo:** It will be nice to show and Build a Python tool (`pyserial` + `matplotlib`) to visualize raw/filtered channels and send updated filter parameters back over UART.

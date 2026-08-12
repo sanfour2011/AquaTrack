@@ -1,4 +1,6 @@
-# AquaTrack
+# 🚧 AquaTrack
+![Status](https://img.shields.io/badge/status-work_in_progress-yellow)
+![Under Construction](docs/hardware/Baustelle.jpg)
 
 ESP32-C3 based water bottle scale. HX711 + 5kg load cell, event-driven processing, deep-sleep concept for battery operation (not yet implemented).
 
@@ -18,7 +20,7 @@ Garmin upload: no public REST API for end users. Web-scraping approach blocked b
 
 ESP32-C3 SuperMini, HX711, 5kg load cell. Pinout/datasheet in `docs/hardware/`.
 
-![Prototype](docs/hardware/prototype.jpg)
+![Prototype](docs/hardware/prototype.png)
 
 3D-printable housing (STL files): `docs/cad/`.
 

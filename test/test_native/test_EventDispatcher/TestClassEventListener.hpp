@@ -1,23 +1,5 @@
-/**
- * @class TestClassEventListener
- * @brief A helper class designed for testing the functionality of the EventDispatcher class.
- * 
- * This class is used to verify that methods from class instances can be invoked correctly 
- * as event listeners, not just static methods or standalone functions. It provides two 
- * listener methods (`listener1` and `listener2`) that can be registered as callbacks 
- * with the EventDispatcher. The class also tracks how many times each listener is called 
- * and stores the last data received by each listener.
- * 
- * @tparam T The type of data that the listeners will handle.
- * 
- * @details
- * - `listener1` and `listener2` are member functions that process incoming data and 
- *   increment their respective counters (`listener1Called` and `listener2called`).
- * - `getListener1` and `getListener2` return lambda functions that bind the respective 
- *   listener methods, allowing them to be used as callbacks in the EventDispatcher.
- * - The class ensures that instance methods can be used seamlessly as event listeners, 
- *   making it suitable for testing scenarios involving non-static methods.
- */
+// Helper for EventDispatcher tests: verifies that member functions
+// (not just free functions) work as listeners.
 
  #pragma once
  #include <EventDispatcher.hpp>

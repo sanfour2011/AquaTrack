@@ -6,6 +6,7 @@
 #include "WaterTracker.hpp"
 //#include "GarminUploader.hpp"
 //#include "DataLogger.hpp"
+// ToDo: CommandProcessor nicht fertig, !!erst nach Refactoring aktivieren!!
 //#include "CommandProcessor.hpp"
 
 

@@ -1,7 +1,9 @@
 #pragma once
 
+//Idee ist das man via serial-port oder irgend ein HMI Einstelungen vornehmen kann.
 // Hier soll irgendwie SCPI ähnliches implementiert werden also ein parser
-// eine Ideee wäre ein string cmd mit einer methode zu verheiraten. Allerdings weiß ich nicht ob das überhaupt möglich ist :( da das ding ja extrem wiedervewendbar sein soll.
+// eine Ideee wäre ein string cmd mit einer methode zu verheiraten bzw. ein Porjekt draus machen
+// um anschließend hier einzubauen. Allerdings weiß ich momentan nicht ob das überhaupt möglich ist :( da das ding ja extrem wiedervewendbar sein soll.
 //  #include <ArduinoSTL.h>
 
 #include <map>

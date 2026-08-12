@@ -14,16 +14,17 @@ protected:
 
 TEST_F(HX711SensorTest, Reading_RawValue)
 {
-    float rawValue = m_hx711Sensor.readRawValue();  
-    Serial.print("[DEBUG] Raw Value: ");  // Nur sichtbar im Serial Monitor!
+    float rawValue = m_hx711Sensor.readRawValue();
+    Serial.print("[DEBUG] Raw Value: "); // Nur sichtbar im Serial Monitor!
     Serial.println(rawValue);
 
     // Serial.print("Raw Value: ");
     // Serial.println(rawValue);
-    EXPECT_NE(rawValue, std::numeric_limits<float>::min());
+    EXPECT_NE(rawValue, -std::numeric_limits<float>::max());
 };
 
-TEST_F(HX711SensorTest, IS_Sensor_Ready){
+TEST_F(HX711SensorTest, IS_Sensor_Ready)
+{
     delay(500);
     EXPECT_TRUE(m_hx711Sensor.isReady());
 };

@@ -4,3 +4,15 @@
 .vscode/launch.json
 .vscode/ipch
 *.zip
+
+# PlatformIO / IDE Sonstiges
+compile_commands.json
+.vscode/settings.json
+
+# Windows-spezifischer Datei-Müll
+Thumbs.db
+desktop.ini
+
+# Backup-/Editor-Dateien
+*.bak
+*~

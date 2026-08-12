@@ -9,7 +9,7 @@ class WaterTracker
 {
 public:
     WaterTracker( EventDispatcher<float> &dispatcher);
-    void begin(); // z. B. lade EEPROM-Werte etc.
+    void begin(); // z. B. lade EEPROM-Werte etc. Daten sollte nach Power-Off noch vorhanden sein
     
     // todo: void undoLastAction();
     void interpretWeight(float newWeight);

@@ -26,6 +26,8 @@ public:
     float getFullWeight() const { return m_fullWeight; }
     void setFullWeight(float value) { m_fullWeight = value; }
 
+    void resetDailyConsumption() {m_dailyConsumption = 0.0f;};
+
     void reset()
     {
         m_dailyConsumption = 0.0f;

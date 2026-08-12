@@ -64,4 +64,37 @@ bool WaterTracker::isNewDay()
     return false;
 }
 
+float WaterTracker::getDailyConsumption() const
+{
+    return m_data.getDailyConsumption();
+}
 
+int WaterTracker::getRefillCount() const
+{
+    return m_data.getRefillCount();
+}
+
+void WaterTracker::resetDailyConsumption()
+{
+    m_data.resetDailyConsumption();
+}
+
+void WaterTracker::setAveragingCount(uint_fast8_t count)
+{
+    m_averagingCount = count;
+}
+
+uint_fast8_t WaterTracker::getAveragingCount() const
+{
+    return m_averagingCount;
+}
+
+void WaterTracker::setMaxCapacity(float maxCapacity)
+{
+    m_data.setMaxCapacity(maxCapacity);
+}
+
+float WaterTracker::getMaxCapacity() const
+{
+    return m_data.getMaxCapacity();
+}

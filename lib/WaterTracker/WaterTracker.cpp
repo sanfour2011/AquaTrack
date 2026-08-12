@@ -22,10 +22,16 @@ void WaterTracker::interpretWeight(float newWeight)
         m_eventDispatcher.dispatch(WaterTrackerEvents::ErrorWaterTracker, newWeight);
         return;
     }
-    
-    if (newWeight < 5.0f) // Gewicht ~0g -> Flasche wurde von der Waage genommen
+
+    if (newWeight < m_containerRemovedThreshold)
     {
         m_eventDispatcher.dispatch(WaterTrackerEvents::ContainerRemoved, newWeight);
+        return;
+    }
+
+    if (newWeight < 5.0f && newWeight > m_containerRemovedThreshold) // Gewicht ~0g mit Flasche => Flasche leer
+    {
+        m_eventDispatcher.dispatch(WaterTrackerEvents::ContainerEmpty, newWeight);
         return;
     }
 
@@ -40,7 +46,6 @@ void WaterTracker::interpretWeight(float newWeight)
 
     if (m_data.getLastWeight() > newWeight) // Water Consumed
     {
-        m_eventDispatcher.dispatch(WaterTrackerEvents::ConsumedMl, newWeight);
         updateConsumption(newWeight);
         return;
     }
@@ -51,7 +56,7 @@ void WaterTracker::updateConsumption(float newWeight)
     if (isNewDay())
         m_data.reset();
 
-    float ml_Consumed = m_data.getPreviousConsumption() - newWeight;
+    float ml_Consumed = m_data.getLastWeight() - newWeight;
     float remainingMl = m_data.getFullWeight() - ml_Consumed;
 
     m_data.setLastWeight(newWeight);
@@ -59,10 +64,10 @@ void WaterTracker::updateConsumption(float newWeight)
     m_data.setPreviousConsumption(ml_Consumed);
     m_data.setDailyConsumption(m_data.getDailyConsumption() + ml_Consumed);
 
-    m_eventDispatcher.dispatch("Consumed_ml", ml_Consumed);
-    m_eventDispatcher.dispatch("Remaining", remainingMl);
-    m_eventDispatcher.dispatch("Daily_Consumption", m_data.getDailyConsumption());
-    m_eventDispatcher.dispatch("Drink_Count", m_data.getDrinkCount());
+    m_eventDispatcher.dispatch(WaterTrackerEvents::ConsumedMl, ml_Consumed);
+    m_eventDispatcher.dispatch(WaterTrackerEvents::Remaining, remainingMl);
+    m_eventDispatcher.dispatch(WaterTrackerEvents::DailyConsumption, m_data.getDailyConsumption());
+    m_eventDispatcher.dispatch(WaterTrackerEvents::DrinkCount, static_cast<float>(m_data.getDrinkCount()));
 }
 
 bool WaterTracker::isNewDay()
@@ -113,4 +118,14 @@ void WaterTracker::setImplausibleWeightThreshold(float implaWeight)
 float WaterTracker::getImplausibleWeightThreshold()
 {
     return m_implausibleWeightThreshold;
+}
+
+void WaterTracker::setContainerRemovedThreshold(float removedThr)
+{
+    m_containerRemovedThreshold = removedThr;
+}
+
+float WaterTracker::getContainerRemovedThreshold()
+{
+    return m_containerRemovedThreshold;
 }

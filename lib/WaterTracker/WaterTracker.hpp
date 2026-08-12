@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "RTCManager.h"
 #include "WaterTrackerData.hpp"
 #include <cstdint>
@@ -8,9 +7,9 @@
 class WaterTracker
 {
 public:
-    WaterTracker( EventDispatcher<float> &dispatcher);
+    WaterTracker(EventDispatcher<float> &dispatcher);
     void begin(); // z. B. lade EEPROM-Werte etc. Daten sollte nach Power-Off noch vorhanden sein
-    
+
     // todo: void undoLastAction();
     void interpretWeight(float newWeight);
     float getDailyConsumption() const;
@@ -22,15 +21,18 @@ public:
     float getMaxCapacity() const;
     void setImplausibleWeightThreshold(float implaWeight);
     float getImplausibleWeightThreshold();
-    
-    
-    private:
+    void setContainerRemovedThreshold(float removedThr);
+    float getContainerRemovedThreshold();
+
+private:
     uint_fast8_t m_averagingCount = 10;
     float m_implausibleWeightThreshold = 5000.0; // max that the scale is rated for in g
+    float m_containerRemovedThreshold = -50.0f;  // threashold value under 0 means bottle lifted
+    
     WaterTrackerData m_data;
     void updateConsumption(float currentWeight);
     bool isNewDay();
     bool isRefilled(float currentWeight);
     void detectDrink(float currentWeight);
-    EventDispatcher<float> &m_eventDispatcher;    
+    EventDispatcher<float> &m_eventDispatcher;
 };

@@ -12,5 +12,6 @@ namespace WaterTrackerEvents {
     constexpr const char* DailyConsumption     = "Daily_Consumption";
     constexpr const char* DrinkCount           = "Drink_Count";
     constexpr const char* RefillDetected       = "Refill";
+    constexpr const char* ContainerEmpty       = "Container_Empty";
     constexpr const char* ErrorWaterTracker    = "Water_Tracker_Error";
 }
